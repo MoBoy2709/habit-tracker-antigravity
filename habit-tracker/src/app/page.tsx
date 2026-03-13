@@ -188,6 +188,7 @@ export default function Dashboard() {
             />
           </div>
           <div className="w-10 h-10 rounded-full bg-yellow-100 overflow-hidden ml-4 border-2 border-white shadow-sm flex-shrink-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix&backgroundColor=fef08a" alt="User Avatar" />
           </div>
         </header>
@@ -370,7 +371,7 @@ export default function Dashboard() {
                     <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 9, fill: '#94a3b8' }} tickFormatter={(val) => `${val}%`} />
                     <Tooltip
                       contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)', fontSize: '12px' }}
-                      formatter={(value: number) => [`${value}%`, 'Completion Rate']}
+                      formatter={(value: any) => [`${value}%`, 'Completion Rate']}
                     />
                     <Line type="monotone" dataKey="completion_rate" stroke="#6366f1" strokeWidth={2} dot={false} activeDot={{ r: 4 }} />
                   </LineChart>
@@ -577,33 +578,62 @@ function NewHabitModal({ category, onClose, onCreate }: {
   );
 }
 
+interface ConfettiPiece {
+  id: number;
+  left: number;
+  delay: number;
+  duration: number;
+  size: number;
+  color: string;
+  isCircle: boolean;
+  rotation: number;
+}
+
 function ConfettiOverlay() {
+  const [pieces, setPieces] = useState<ConfettiPiece[]>([]);
+
+  useEffect(() => {
+    const newPieces = Array.from({ length: 50 }, (_, i) => {
+      const left = Math.random() * 100;
+      const delay = Math.random() * 0.5;
+      const duration = 1 + Math.random() * 1;
+      const size = 6 + Math.random() * 8;
+      const colors = ['#6366f1', '#2dd4bf', '#f59e0b', '#ef4444', '#8b5cf6', '#10b981', '#f97316'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      return {
+        id: i,
+        left,
+        delay,
+        duration,
+        size,
+        color,
+        isCircle: Math.random() > 0.5,
+        rotation: Math.random() * 360,
+      };
+    });
+    setPieces(newPieces);
+  }, []);
+
+  if (pieces.length === 0) return null;
+
   return (
     <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
-      {Array.from({ length: 50 }, (_, i) => {
-        const left = Math.random() * 100;
-        const delay = Math.random() * 0.5;
-        const duration = 1 + Math.random() * 1;
-        const size = 6 + Math.random() * 8;
-        const colors = ['#6366f1', '#2dd4bf', '#f59e0b', '#ef4444', '#8b5cf6', '#10b981', '#f97316'];
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        return (
-          <div
-            key={i}
-            style={{
-              position: 'absolute',
-              left: `${left}%`,
-              top: '-10px',
-              width: `${size}px`,
-              height: `${size}px`,
-              backgroundColor: color,
-              borderRadius: Math.random() > 0.5 ? '50%' : '2px',
-              animation: `confetti-fall ${duration}s ease-out ${delay}s forwards`,
-              transform: `rotate(${Math.random() * 360}deg)`,
-            }}
-          />
-        );
-      })}
+      {pieces.map((p) => (
+        <div
+          key={p.id}
+          style={{
+            position: 'absolute',
+            left: `${p.left}%`,
+            top: '-10px',
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            backgroundColor: p.color,
+            borderRadius: p.isCircle ? '50%' : '2px',
+            animation: `confetti-fall ${p.duration}s ease-out ${p.delay}s forwards`,
+            transform: `rotate(${p.rotation}deg)`,
+          }}
+        />
+      ))}
       <style>{`
         @keyframes confetti-fall {
           0% { transform: translateY(0) rotate(0deg); opacity: 1; }

@@ -1,6 +1,6 @@
 import { supabase } from './supabase';
 import type {
-  Habit, HabitWithStreak, HabitLog, Streak, Notification,
+  Habit, HabitWithStreak, HabitLog, Notification,
   CreateHabitDTO, UpdateHabitDTO, DashboardStats, ProgressDataPoint, CalendarDay
 } from './types';
 
