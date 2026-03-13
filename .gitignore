@@ -1,0 +1,20 @@
+# IDEs
+.idea/
+.vscode/
+
+# Build artifacts
+node_modules/
+
+# Agent/AI tools
+.agent/
+.agents/
+_agents/
+_agent/
+.gemini/
+
+# Env overrides
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
